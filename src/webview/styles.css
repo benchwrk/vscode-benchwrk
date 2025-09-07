@@ -1,0 +1,59 @@
+body {
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--vscode-editor-background);
+  color: var(--vscode-editor-foreground);
+  font-family: var(--vscode-font-family);
+}
+
+.container {
+  padding: 1px;
+  flex: 1;
+}
+
+/* Custom styles for vscode-elements components when used in React */
+vsc-button {
+  margin-top: 10px;
+  display: block;
+  width: auto;
+}
+
+vsc-divider {
+  margin: 16px 0;
+}
+
+vsc-text-field {
+  width: 100%;
+}
+
+.panel-container {
+  padding: 10px;
+  height: 100%;
+}
+
+/* Additional styling for the tabs */
+vsc-tabs {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+vsc-tab-panel {
+  padding: 16px;
+  overflow: auto;
+  flex: 1;
+}
+
+h3 {
+  margin-top: 0;
+  color: var(--vscode-editor-foreground);
+}
+
+p {
+  line-height: 1.5;
+  color: var(--vscode-editor-foreground);
+}
