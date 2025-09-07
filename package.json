@@ -1,19 +1,19 @@
 {
-  "name": "benchwrk-open",
-  "displayName": "BenchWrk",
+  "name": "vscode-benchwrk",
+  "displayName": "BenchWrk open",
   "description": "Logs aggregator",
   "type": "module",
-  "version": "0.0.4",
+  "version": "0.0.1",
   "publisher": "Benchwrk",
   "repository": {
-    "url": ""
+    "url": "https://github.com/benchwrk/vscode-benchwrk"
   },
   "icon": "icon128.png",
   "engines": {
     "vscode": "^1.103.0"
   },
   "activationEvents": [
-    "onView:benchwrk.customPanel"
+    "*"
   ],
   "main": "./out/extension.js",
   "contributes": {
@@ -27,7 +27,7 @@
       "panel": [
         {
           "id": "benchwrkPanel",
-          "title": "BenchWrk",
+          "title": "BenchWrk open",
           "icon": "$(terminal)"
         }
       ]

@@ -53,7 +53,7 @@ export function activate(context: vscode.ExtensionContext) {
     );
 
     // Try to open the panel automatically - try the terminal version first since that's what you want
-    vscode.commands.executeCommand("benchwrk.terminalPanel.focus");
+    // vscode.commands.executeCommand("benchwrk.terminalPanel.focus");
 
     // Command to show the panel
     const showPanelCommand = vscode.commands.registerCommand(
@@ -92,6 +92,65 @@ class CustomPanelViewProvider implements vscode.WebviewViewProvider {
     context: vscode.WebviewViewResolveContext,
     _token: vscode.CancellationToken
   ) {
+    // Read sources.json from the workspace root
+    const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
+    if (workspaceFolder) {
+      const sourcesUri = vscode.Uri.joinPath(
+        workspaceFolder.uri,
+        "sources.json"
+      );
+      vscode.workspace.fs.readFile(sourcesUri).then(
+        (content) => {
+          const sources = JSON.parse(new TextDecoder("utf-8").decode(content));
+          // Send to webview
+          webviewView.webview.postMessage({
+            type: "sourcesData",
+            data: sources,
+          });
+        },
+        (error) => {
+          console.error("Failed to read sources.json from workspace:", error);
+          vscode.window.showErrorMessage(
+            "Could not load sources.json from workspace."
+          );
+        }
+      );
+    } else {
+      vscode.window.showErrorMessage("No workspace folder open.");
+    }
+
+    // Function to read and send sources.json
+    const readAndSendSources = () => {
+      const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
+      if (workspaceFolder) {
+        const sourcesUri = vscode.Uri.joinPath(
+          workspaceFolder.uri,
+          "sources.json"
+        );
+        vscode.workspace.fs.readFile(sourcesUri).then((content) => {
+          const sources = JSON.parse(new TextDecoder("utf-8").decode(content));
+          webviewView.webview.postMessage({
+            type: "sourcesData",
+            data: sources,
+          });
+        });
+      }
+    };
+    // Initial read
+    readAndSendSources();
+
+    // Handle messages from webview
+    webviewView.webview.onDidReceiveMessage((message) => {
+      switch (message.type) {
+        case "refreshSources":
+          readAndSendSources(); // Re-read on refresh
+          break;
+        case "info":
+          vscode.window.showInformationMessage(message.value);
+          break;
+      }
+    });
+
     // Allow scripts in the webview
     webviewView.webview.options = {
       enableScripts: true,
@@ -100,33 +159,9 @@ class CustomPanelViewProvider implements vscode.WebviewViewProvider {
 
     // Set the webview's HTML content
     webviewView.webview.html = this._getWebviewContent(webviewView.webview);
-
-    // Handle messages from the webview if needed
-    webviewView.webview.onDidReceiveMessage((message) => {
-      switch (message.type) {
-        case "info":
-          vscode.window.showInformationMessage(message.value);
-          break;
-      }
-    });
   }
 
   private _getWebviewContent(webview: vscode.Webview): string {
-    // Create URIs for the script files that will be loaded in the webview
-    // const webviewScriptUri = webview.asWebviewUri(
-    //   vscode.Uri.joinPath(this._extensionUri, "out", "webview.js")
-    // );
-    // const vsCodeElementsUri = webview.asWebviewUri(
-    //   vscode.Uri.joinPath(
-    //     this._extensionUri,
-    //     "node_modules",
-    //     "@vscode-elements",
-    //     "elements",
-    //     "dist",
-    //     "bundled.js"
-    //   )
-    // );
-
     const nonce = getNonce();
     // The CSS file from the React build output
     const stylesUri = getUri(webview, this._extensionUri, [
@@ -143,24 +178,13 @@ class CustomPanelViewProvider implements vscode.WebviewViewProvider {
       "index.js",
     ]);
 
-    // const benchwrkUiUri = webview.asWebviewUri(
-    //   vscode.Uri.joinPath(
-    //     this._extensionUri,
-    //     "node_modules",
-    //     "@benchwrk",
-    //     "ui",
-    //     "dist",
-    //     "index.js"
-    //   )
-    // );
-
     // The HTML content for the webview panel with React
     return `<!DOCTYPE html>
 		<html lang="en" class="dark">
 		<head>
 			<meta charset="UTF-8">
 			<meta name="viewport" content="width=device-width, initial-scale=1.0">
-			<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${webview.cspSource} 'unsafe-inline'; script-src ${webview.cspSource} 'unsafe-inline'; img-src ${webview.cspSource} https:; connect-src https://api.benchwrk.com;"> 
+			<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${webview.cspSource} 'unsafe-inline'; script-src ${webview.cspSource} 'unsafe-inline'; img-src ${webview.cspSource} https:; connect-src *;"> 
       <title>BenchWrk Panel</title>
           <link rel="stylesheet" type="text/css" href="${stylesUri}">
 			<!-- Load VSCode Elements first --> 

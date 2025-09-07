@@ -21,6 +21,14 @@ export const MainTabs = memo(() => {
     };
   });
 
+  if (sources.length === 0) {
+    return (
+      <div className="flex flex-col justify-center items-center gap-1 px-2 py-4 max-h-[340px] overflow-y-auto">
+        No sources available. Please add to `sources.json``
+      </div>
+    );
+  }
+
   return (
     <LogStreamProvider>
       <LogsProvider sources={sources}>

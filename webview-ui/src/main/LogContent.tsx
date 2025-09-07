@@ -20,7 +20,7 @@ export const LogContent = ({ sourceId }: { sourceId: string }) => {
 
 export const LogListSkeleton = () => {
   return (
-    <div className="flex flex-col gap-1 px-2 py-4 max-h-[340px] overflow-y-auto">
+    <div className="flex flex-col justify-center items-center gap-1 px-2 py-4 max-h-[340px] overflow-y-auto">
       <VscodeProgressRing />
     </div>
   );
@@ -31,7 +31,7 @@ const LogList = memo(({ sourceId }: { sourceId: string }) => {
   const logEntries = logs[sourceId] || [];
   console.log("Rendering LogList with logs:", logEntries);
   return (
-    <div className="flex flex-col gap-1 px-2 py-0 max-h-[calc(100vh_-_80px)] overflow-y-auto">
+    <div className="flex flex-col gap-1 px-2 py-0 max-h-[calc(100vh_-_70px)] overflow-y-auto">
       {logEntries.length > 0 ? (
         logEntries.flat().map((log) => <LogSlice log={log} key={log.id} />)
       ) : (

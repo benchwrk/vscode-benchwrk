@@ -1,16 +1,3 @@
 {
-  "sources": [
-    {
-      "id": "1",
-      "name": "Coolify",
-      "slug": "coolify",
-      "type": "3rd-party",
-      "config": {
-        "server": "http://142***************/",
-        "endpoint": "/applications/{uuid}/logs",
-        "accessKey": "3|x7*********************",
-        "appId": "t4c8****************"
-      }
-    }
-  ]
+  "sources": []
 }

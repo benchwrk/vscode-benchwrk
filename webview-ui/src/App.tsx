@@ -1,8 +1,8 @@
 import "./App.css";
-import { BenchWrk } from "./main";
+import { BenchwrkMain } from "./main/index";
 
 function App() {
-  return <BenchWrk />;
+  return <BenchwrkMain />;
 }
 
 export default App;
